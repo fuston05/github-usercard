@@ -15,10 +15,12 @@
 */
 
 axios
-  .get('https://api.github.com/users/fuston05')//end get
+  .get('https://api.github.com/users/fuston05')
+
   .then( (res) => {
+    const data= res.data;//destructure the object
     const cards= document.querySelector('.cards');
-    cards.appendChild( createCard(res) );
+    cards.appendChild( createCard(data) );
   })
   .catch( err => {
     console.log('Error: ', err);
@@ -34,18 +36,18 @@ axios
           user, and adding that card to the DOM.
 */
 
-const followersArray = ['ron-hughes', 'DaniWinston25', 'april5622', 'Damico-Williams', 'rachellsincere'];
-followersArray.forEach( ele => {
-  axios
-    .get(`https://api.github.com/users/${ele}`)
-    .then( (res) => {
-      const cards= document.querySelector('.cards');
-      cards.appendChild(createCard(res));
-    })
-    .catch( (err) => {
-      console.log('Error ', err);
-    })
-} );//end foreach
+// const followersArray = ['ron-hughes', 'DaniWinston25', 'april5622', 'Damico-Williams', 'rachellsincere'];
+// followersArray.forEach( ele => {
+//   axios
+//     .get(`https://api.github.com/users/${ele}`)
+//     .then( (res) => {
+//       const cards= document.querySelector('.cards');
+//       cards.appendChild(createCard(res));
+//     })
+//     .catch( (err) => {
+//       console.log('Error ', err);
+//     })
+// } );//end foreach
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -80,16 +82,16 @@ function createCard(res){
     const bio= document.createElement('p');
 
     // populate data from dataObject
-    name.textContent= res.data.name;
-    userImage.src= res.data.avatar_url;
-    userName.textContent= res.data.login;
-    location.textContent= 'Location:'+res.data.location;
+    name.textContent= res.name;
+    userImage.src= res.avatar_url;
+    userName.textContent= res.login;
+    location.textContent= 'Location:'+res.location;
     profile.textContent= 'Profile: ';
-    profileUrl.setAttribute('href', res.data.url);
-    profileUrl.textContent= res.data.url;
-    followersCount.textContent= 'Followers: '+res.data.followers;
-    followingCount.textContent= 'Following: '+res.data.following;
-    bio.textContent= 'Bio: '+res.data.bio;
+    profileUrl.setAttribute('href', res.url);
+    profileUrl.textContent= res.url;
+    followersCount.textContent= 'Followers: '+res.followers;
+    followingCount.textContent= 'Following: '+res.following;
+    bio.textContent= 'Bio: '+res.bio;
 
     //append structure
     card.appendChild(userImage);
