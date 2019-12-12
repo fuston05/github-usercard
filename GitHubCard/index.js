@@ -14,6 +14,20 @@
            create a new component and add it to the DOM as a child of .cards
 */
 
+axios
+  .get('https://api.github.com/users/fuston05')//end get
+  .then( (res) => {
+    const data= res.data; //destructure res object
+    const cards= document.querySelector('.cards');
+    cards.appendChild( createCard(res) );
+
+    // console.log(data);
+
+  })
+  .catch( err => {
+    console.log('Error: ', err);
+  } )
+
 /* Step 5: Now that you have your own card getting added to the DOM, either 
           follow this link in your browser https://api.github.com/users/<Your github name>/followers 
           , manually find some other users' github handles, or use the list found 
@@ -43,8 +57,55 @@ const followersArray = [];
     <p>Bio: {users bio}</p>
   </div>
 </div>
-
 */
+function createCard(res){
+  //create elements
+    const card= document.createElement('div');
+    const userImage= document.createElement('img');
+    const cardInfo= document.createElement('div');
+    const name= document.createElement('h3');
+    const userName= document.createElement('p');
+    const location= document.createElement('p');
+    const profile= document.createElement('p');
+    const profileUrl= document.createElement('a');
+    const followersCount= document.createElement('p');
+    const followingCount= document.createElement('p');
+    const bio= document.createElement('p');
+
+    // populate data from dataObject
+    name.textContent= res.data.name;
+    userImage.src= res.data.avatar_url;
+    userName.textContent= res.data.login;
+    location.textContent= 'Location:'+res.data.location;
+    profile.textContent= 'Profile: ';
+    profileUrl.setAttribute('href', res.data.url);
+    profileUrl.textContent= res.data.url;
+    followersCount.textContent= 'Followers: '+res.data.followers;
+    followingCount.textContent= 'Following: '+res.data.following;
+    bio.textContent= 'Bio: '+res.data.bio;
+
+    //append structure
+    card.appendChild(userImage);
+    card.appendChild(cardInfo);
+    cardInfo.appendChild(name);
+    cardInfo.appendChild(userName);
+    cardInfo.appendChild(location);
+    cardInfo.appendChild(profile);
+    profile.appendChild(profileUrl);
+    cardInfo.appendChild(followersCount);
+    cardInfo.appendChild(followingCount);
+    cardInfo.appendChild(bio);
+
+    //add classes
+    card.classList.add('card');
+    userImage.classList.add('img');
+    cardInfo.classList.add('info');
+    name.classList.add('name');
+    name.classList.add('userName');
+
+  return card;
+}//end func
+
 
 /* List of LS Instructors Github username's: 
   tetondan
