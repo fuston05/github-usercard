@@ -16,25 +16,20 @@
 
 axios
   .get('https://api.github.com/users/fuston05')
-
   .then( (res) => {
     const info= res.data;//destructure the object
     const cards= document.querySelector('.cards');
     
-
     let reposUrl= info.repos_url;
     axios
       .get(reposUrl)
       .then(reposRes => {
         let reposCount= 'Repos: '+reposRes.data.length;
         cards.appendChild( createCard(info, reposCount) );
-        // console.log(reposCount);
       })
       .catch(err => {
         console.log('My repos count url error: ', err);
       })
-
-    // console.log(info);
     getFollowers(info);
   })
   .catch( err => {
@@ -123,7 +118,6 @@ function createCard(res, reposCount){
       
     });//end event
 
-
     //append structure
     card.appendChild(userImage);
     card.appendChild(cardInfo);
@@ -180,9 +174,7 @@ function getFollowers( userObj ){
           })
           .catch(err => {
             console.log('Repos Url Error: ', err);
-          })
-
-        
+          }) 
       }//end for
     } )
     .catch( newErr => {
@@ -191,28 +183,3 @@ function getFollowers( userObj ){
 }//end func
 
 
-// ///////////// expanding card with a button and additional info //////////////
-
-// create new component with a button
-function createExpandableCard(obj){
-  //create elements
-  const expandedCard= document.createElement('div');
-  const button= document.createElement('button');
-
-  const pubReposCount= document.createElement('p');
-
-  //create structure
-  expandedCard.appendChild(button);
-  expandedCard.appendChild(pubReposCount);
-
-  //add classes
-  expandedCard.classList.add('expanded');
-
-  //fill data
-  button.textContent= 'More Info';
-  pubReposCount.textContent= obj.data.length;
-
-  return expandedCard;
-}//end func
-
-// createExpandableCard();
