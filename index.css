@@ -123,5 +123,20 @@ body {
   margin: 3px 0 10px;
 }
 
+button{
+  margin: 5px 0 0 0; 
+}
+
+.expandedCard{
+  background-color: #eee;
+  height: 100px;
+  width: 100%;
+  margin: 3% 0 0 0;
+}
+
+.show{
+  display: block;
+}
+
 
 

@@ -82,6 +82,7 @@ function createCard(res){
     const followersCount= document.createElement('p');
     const followingCount= document.createElement('p');
     const bio= document.createElement('p');
+    const button= document.createElement('button');
 
     // populate data from dataObject
     name.textContent= res.name;
@@ -94,6 +95,7 @@ function createCard(res){
     followersCount.textContent= 'Followers: '+res.followers;
     followingCount.textContent= 'Following: '+res.following;
     bio.textContent= 'Bio: '+res.bio;
+    button.textContent= 'See More ...';
 
     //append structure
     card.appendChild(userImage);
@@ -106,6 +108,7 @@ function createCard(res){
     cardInfo.appendChild(followersCount);
     cardInfo.appendChild(followingCount);
     cardInfo.appendChild(bio);
+    cardInfo.appendChild(button);
 
     //add classes
     card.classList.add('card');
@@ -126,22 +129,62 @@ function createCard(res){
   bigknell
 */
 
-// //////////////////// STRETCH //////////////////////////
-/////////////////////////////////////////////////////////
+// //////////////////// STRETCH /////////////////////////////////
+////////////////////////////////////////////////////////////////
 
-//function to call for followers
+// ///////////// function to call for followers //////////////
 function getFollowers( userObj ){
   const cards= document.querySelector('.cards');
+  const repos= document.querySelector('.expandedCard p');
   const folUrl= userObj.followers_url; //get url for followers from user object
   axios 
     .get(folUrl) 
     .then( newRes => {
       const folArr= newRes.data; //destructure
+      console.log(folArr);
       folArr.forEach( ele => {
         cards.appendChild( createCard(ele) );
+        //get url for repos
+        let reposUrl= ele.repos_url;
+
+        axios
+          .get(reposUrl)
+          .then(res => {
+            let reposCount= res.data.length;
+            
+          })
+          .catch(err => {
+            console.log('Repos Url Error: ', err);
+          })
+
       } );//end foreach
     } )
     .catch( newErr => {
       console.log('newErr: ', newErr);
     } )
 }//end func
+
+
+// ///////////// expanding card with a button and additional info //////////////
+
+// // create new component with a button
+// function createExpandableCard(obj){
+//   //create elements
+//   const expandedCard= document.createElement('div');
+//   const button= document.createElement('button');
+
+//   const pubReposCount= document.createElement('p');
+
+//   //create structure
+//   expandedCard.appendChild(button);
+//   expandedCard.appendChild(pubReposCount);
+
+//   //add classes
+//   expandedCard.classList.add('expanded');
+
+//   //fill data
+//   button.textContent= 'More Info';
+//   pubReposCount.textContent= obj.public_repos;
+
+//   return expandedCard;
+// }//end func
