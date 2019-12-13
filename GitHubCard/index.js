@@ -20,7 +20,20 @@ axios
   .then( (res) => {
     const info= res.data;//destructure the object
     const cards= document.querySelector('.cards');
-    cards.appendChild( createCard(info) );
+    
+
+    let reposUrl= info.repos_url;
+    axios
+      .get(reposUrl)
+      .then(reposRes => {
+        let reposCount= 'Repos: '+reposRes.data.length;
+        cards.appendChild( createCard(info, reposCount) );
+        // console.log(reposCount);
+      })
+      .catch(err => {
+        console.log('My repos count url error: ', err);
+      })
+
     // console.log(info);
     getFollowers(info);
   })
@@ -69,7 +82,7 @@ axios
   </div>
 </div>
 */
-function createCard(res){
+function createCard(res, reposCount){
   //create elements
     const card= document.createElement('div');
     const userImage= document.createElement('img');
@@ -82,7 +95,8 @@ function createCard(res){
     const followersCount= document.createElement('p');
     const followingCount= document.createElement('p');
     const bio= document.createElement('p');
-    const button= document.createElement('button');
+    const addInfo= document.createElement('p');
+    const btn= document.createElement('button');
 
     // populate data from dataObject
     name.textContent= res.name;
@@ -95,7 +109,20 @@ function createCard(res){
     followersCount.textContent= 'Followers: '+res.followers;
     followingCount.textContent= 'Following: '+res.following;
     bio.textContent= 'Bio: '+res.bio;
-    button.textContent= 'See More ...';
+    addInfo.textContent= reposCount;
+    btn.textContent= 'How Many Repos ...';
+
+    //events
+    btn.addEventListener('click', (event) => {
+      addInfo.classList.toggle('show');
+      if( addInfo.classList.contains('show') ){
+        btn.textContent= 'Close';
+      }else{
+        btn.textContent= 'How Many Repos ...';
+      }//end if
+      
+    });//end event
+
 
     //append structure
     card.appendChild(userImage);
@@ -108,7 +135,8 @@ function createCard(res){
     cardInfo.appendChild(followersCount);
     cardInfo.appendChild(followingCount);
     cardInfo.appendChild(bio);
-    cardInfo.appendChild(button);
+    cardInfo.appendChild(btn);
+    cardInfo.appendChild(addInfo);
 
     //add classes
     card.classList.add('card');
@@ -116,6 +144,7 @@ function createCard(res){
     cardInfo.classList.add('info');
     name.classList.add('name');
     name.classList.add('userName');
+    addInfo.classList.add('addInfo');
 
   return card;
 }//end func
@@ -135,29 +164,26 @@ function createCard(res){
 // ///////////// function to call for followers //////////////
 function getFollowers( userObj ){
   const cards= document.querySelector('.cards');
-  const repos= document.querySelector('.expandedCard p');
-  const folUrl= userObj.followers_url; //get url for followers from user object
+  let folUrl= userObj.followers_url; //get url for followers from user object
   axios 
     .get(folUrl) 
     .then( newRes => {
       const folArr= newRes.data; //destructure
-      console.log(folArr);
-      folArr.forEach( ele => {
-        cards.appendChild( createCard(ele) );
-        //get url for repos
-        let reposUrl= ele.repos_url;
-
+      for( let i= 0; i < folArr.length; i++ ){
+        let reposUrl= folArr[i].repos_url;
         axios
           .get(reposUrl)
-          .then(res => {
-            let reposCount= res.data.length;
-            
+          .then(rep => {
+            let reposCount= 'Repos: '+rep.data.length;
+            cards.appendChild(createCard(folArr[i], reposCount) );
+            // console.log(reposCount);
           })
           .catch(err => {
             console.log('Repos Url Error: ', err);
           })
 
-      } );//end foreach
+        
+      }//end for
     } )
     .catch( newErr => {
       console.log('newErr: ', newErr);
@@ -167,24 +193,26 @@ function getFollowers( userObj ){
 
 // ///////////// expanding card with a button and additional info //////////////
 
-// // create new component with a button
-// function createExpandableCard(obj){
-//   //create elements
-//   const expandedCard= document.createElement('div');
-//   const button= document.createElement('button');
+// create new component with a button
+function createExpandableCard(obj){
+  //create elements
+  const expandedCard= document.createElement('div');
+  const button= document.createElement('button');
 
-//   const pubReposCount= document.createElement('p');
+  const pubReposCount= document.createElement('p');
 
-//   //create structure
-//   expandedCard.appendChild(button);
-//   expandedCard.appendChild(pubReposCount);
+  //create structure
+  expandedCard.appendChild(button);
+  expandedCard.appendChild(pubReposCount);
 
-//   //add classes
-//   expandedCard.classList.add('expanded');
+  //add classes
+  expandedCard.classList.add('expanded');
 
-//   //fill data
-//   button.textContent= 'More Info';
-//   pubReposCount.textContent= obj.public_repos;
+  //fill data
+  button.textContent= 'More Info';
+  pubReposCount.textContent= obj.data.length;
 
-//   return expandedCard;
-// }//end func
+  return expandedCard;
+}//end func
+
+// createExpandableCard();
