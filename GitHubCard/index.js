@@ -18,9 +18,11 @@ axios
   .get('https://api.github.com/users/fuston05')
 
   .then( (res) => {
-    const data= res.data;//destructure the object
+    const info= res.data;//destructure the object
     const cards= document.querySelector('.cards');
-    cards.appendChild( createCard(data) );
+    cards.appendChild( createCard(info) );
+    // console.log(info);
+    getFollowers(info);
   })
   .catch( err => {
     console.log('Error: ', err);
@@ -123,3 +125,23 @@ function createCard(res){
   luishrd
   bigknell
 */
+
+// //////////////////// STRETCH //////////////////////////
+/////////////////////////////////////////////////////////
+
+//function to call for followers
+function getFollowers( userObj ){
+  const cards= document.querySelector('.cards');
+  const folUrl= userObj.followers_url; //get url for followers from user object
+  axios 
+    .get(folUrl) 
+    .then( newRes => {
+      const folArr= newRes.data; //destructure
+      folArr.forEach( ele => {
+        cards.appendChild( createCard(ele) );
+      } );//end foreach
+    } )
+    .catch( newErr => {
+      console.log('newErr: ', newErr);
+    } )
+}//end func
